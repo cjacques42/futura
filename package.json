@@ -10,5 +10,10 @@
     "futura": "./cli.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "chalk": "^2.4.1",
+    "yargs": "^12.0.1"
+  }
 }
