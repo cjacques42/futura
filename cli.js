@@ -80,27 +80,21 @@ function saveFile(option) {
 function genRouter(data) {
   let router = [
     "import fs from 'fs';",
-    "WebApp.connectHandlers"
-  ];
-  let end = [
-    ".use(( req, res, next ) => {",
-    "  res.write( '404' );",
-    "  return res.end();",
-    "})"
   ];
   for (let i = 0; i < data.length; i++) {
     let { name, path } = data[i];
-    router.push(`.use("${path}", ( req, res, next ) => {`);
-    router.push("let data = fs.readFileSync( `${ process.env.PWD }/private/" + name + ".html` );");
-    router.push("res.write( data );");
-    router.push("return res.end();");
-    router.push("})");
+    router.push(`Picker.route('${path}', function(params, req, res, next) {`);
+    router.push("\tlet data = fs.readFileSync( `${ process.env.PWD }/private/" + name + ".html` );");
+    router.push("\tres.write( data );");
+    router.push("\treturn res.end();");
+    router.push("});");
+    router.push("\n");
   }
   let routerStr = router.join('\n');
-  let endStr = end.join('\n');
+  // let endStr = end.join('\n');
   if ( !fs.existsSync( `${directory}/meteor/server` ) )
 			fs.mkdirSync( `${directory}/meteor/server` );
-	fs.writeFileSync( `${directory}/meteor/server/main.js`, `${routerStr}\n${endStr}`);
+	fs.writeFileSync( `${directory}/meteor/server/main.js`, `${routerStr}`);
 }
 
 function sync(token) {
@@ -138,7 +132,8 @@ function init() {
   fs.mkdirSync(directory);
 
   console.log(chalk.blue('Creating meteor project...'));
-  const meteor = spawn('meteor', ['create', '--bare', `${directory}/meteor`]);
+  // const meteor = spawn('meteor', ['create', '--bare', `${directory}/meteor`]);
+  const meteor = spawn('git', ['clone', 'https://github.com/cjacques42/build.git', `${directory}/meteor`]);
   meteor.stderr.on('data', (data) => {
     console.log(chalk.red(data));
   });
