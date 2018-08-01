@@ -139,6 +139,14 @@ function init() {
   });
   meteor.on('close', (code) => {
     if (code === 0) {
+      const npm = spawn('npm', ['install', `${directory}/meteor`]);
+      npm.stderr.on('data', (data) => {});
+      npm.on('close', (code) => {
+        if (code === 0) {
+          console.log(chalk.green('dependencies installed'));
+        }
+        console.log(chalk.yellow(`Code ${code}`));
+      });
       console.log(chalk.green('finished'));
     }
     console.log(chalk.yellow(`Code ${code}`));
